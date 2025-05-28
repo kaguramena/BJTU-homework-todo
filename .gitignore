@@ -3,3 +3,5 @@ __pycache__/
 venv/
 *.json
 *.cfg
+.venv/
+.DS_Store
