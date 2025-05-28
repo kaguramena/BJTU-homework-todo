@@ -1,0 +1,5 @@
+request
+requests_oauthlib
+azure-identity
+msgraph-sdk
+msal
