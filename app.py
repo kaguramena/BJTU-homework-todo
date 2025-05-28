@@ -109,14 +109,61 @@ def process(add_homework = False):
         print(result.get("error_description"))
         print(result.get("correlation_id"))
 
+import os
+
+def create_config_file():
+    # 检查当前目录下是否存在 config.cfg 文件
+    if os.path.exists('config.cfg'):
+        print("config.cfg 文件已存在，无需重新创建。")
+        return
+
+    # 提示用户输入学期代码和学号
+    xq_code = input("请输入学期代码：")
+    confirm_xq_code = input("请再次输入学期代码以确认：")
+
+    student_id = input("请输入学号：")
+    confirm_student_id = input("请再次输入学号以确认：")
+
+    # 检查输入是否一致
+    if xq_code != confirm_xq_code or student_id != confirm_student_id:
+        print("输入的学期代码或学号不一致，请重新运行程序并输入正确的信息。")
+        raise Exception()
+
+    # 创建 config.cfg 文件并写入内容
+    config_content = f"""[azure]
+clientId = 822c6036-dd15-4f7f-86f8-6e54218319f7
+graphUserScopes = User.Read Mail.Read Mail.Send
+
+[gethw]
+xqCode = {xq_code}
+studentId = {student_id}
+savePath = ./
+jsonFile = homework.json
+"""
+
+    with open('config.cfg', 'w') as file:
+        file.write(config_content)
+
+    print("config.cfg 文件已成功创建。")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Microsoft To Do CLI")
     parser.add_argument('-a','--add-homework', action = "store_true", help='Update Homework List')
-    args = parser.parse_args()
-    add_homework = False
-    if args.add_homework:
-        add_homework = True
-    process(add_homework)
+    try:
+        create_config_file()
+        if not os.path.exists("./homework.json"):
+            with open('homework.json', 'w') as file:
+                file.write('{}')
+        args = parser.parse_args()
+        add_homework = False
+        if args.add_homework:
+            add_homework = True
+        process(add_homework)
+    except Exception as e:
+        pass
+
+    
 
 
 
